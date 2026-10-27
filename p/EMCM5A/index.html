@@ -3,8 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Простой Мессенджер</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Адаптивный Мессенджер</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .messenger-container {
+            display: flex;
+            width: 100%;
+            max-width: 1000px;
+            height: 100vh;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 768px) {
+            .messenger-container {
+                height: 85vh;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+        }
+
+        .sidebar {
+            width: 100%;
+            max-width: 320px;
+            border-right: 1px solid #e5e5e5;
+            display: flex;
+            flex-direction: column;
+            background-color: #fafafa;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .chat-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover, .chat-item.active {
+            background-color: #eaeaea;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #0084ff;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .chat-info h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .chat-info p, .chat-info span {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            position: relative;
+            font-size: 14px;
+        }
+
+        .message.incoming {
+            background-color: #ffffff;
+            align-self: flex-start;
+            border: 1px solid #e5e5e5;
+        }
+
+        .message.outgoing {
+            background-color: #0084ff;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message .time {
+            display: block;
+            font-size: 10px;
+            margin-top: 4px;
+            text-align: right;
+            opacity: 0.7;
+        }
+
+        .message-form {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e5e5e5;
+            background-color: #ffffff;
+        }
+
+        .message-form input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .message-form input:focus {
+            border-color: #0084ff;
+        }
+
+        .message-form button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .message-form button:hover {
+            background-color: #006dd6;
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                display: none; 
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="messenger-container">
@@ -57,7 +239,54 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const messageForm = document.getElementById('messageForm');
+            const messageInput = document.getElementById('messageInput');
+            const messagesContainer = document.getElementById('messagesContainer');
+
+            messageForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const text = messageInput.value.trim();
+                if (text === '') return;
+
+                appendMessage(text, 'outgoing');
+                messageInput.value = '';
+                
+                setTimeout(() => {
+                    appendMessage('Это автоматический ответ.', 'incoming');
+                }, 1000);
+            });
+
+            function appendMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', type);
+
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                messageDiv.innerHTML = `
+                    <p>${escapeHtml(text)}</p>
+                    <span class="time">${timeString}</span>
+                `;
+
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            function escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, m => map[m]);
+            }
+        });
+    </script>
 
 <div class="beal-site-footer" style="margin-top:24px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.12);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#9aa3c4;text-align:center;background:rgba(0,0,0,.12);">🌐 Наш сайт: <a href="https://bealai.neocities.org/" target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;">bealai.neocities.org</a></div>
 </body>
