@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Адаптивный Мессенджер</title>
+    <title>Простой Кликер</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,279 +13,154 @@
         }
 
         body {
-            background-color: #f0f2f5;
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .messenger-container {
-            display: flex;
-            width: 100%;
-            max-width: 1000px;
-            height: 100vh;
-            background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (min-width: 768px) {
-            .messenger-container {
-                height: 85vh;
-                border-radius: 12px;
-                overflow: hidden;
-            }
-        }
-
-        .sidebar {
-            width: 100%;
-            max-width: 320px;
-            border-right: 1px solid #e5e5e5;
-            display: flex;
-            flex-direction: column;
-            background-color: #fafafa;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #e5e5e5;
-        }
-
-        .chat-list {
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .chat-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .chat-item:hover, .chat-item.active {
-            background-color: #eaeaea;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #0084ff;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .chat-info h3 {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 4px;
-        }
-
-        .chat-info p, .chat-info span {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #ffffff;
-        }
-
-        .chat-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e5e5e5;
-            display: flex;
-            align-items: center;
-        }
-
-        .messages-container {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background-color: #f9f9f9;
-        }
-
-        .message {
-            max-width: 75%;
-            padding: 10px 14px;
-            border-radius: 12px;
-            position: relative;
-            font-size: 14px;
-        }
-
-        .message.incoming {
-            background-color: #ffffff;
-            align-self: flex-start;
-            border: 1px solid #e5e5e5;
-        }
-
-        .message.outgoing {
-            background-color: #0084ff;
-            color: white;
-            align-self: flex-end;
-        }
-
-        .message .time {
-            display: block;
-            font-size: 10px;
-            margin-top: 4px;
-            text-align: right;
-            opacity: 0.7;
-        }
-
-        .message-form {
-            display: flex;
-            padding: 15px;
-            border-top: 1px solid #e5e5e5;
-            background-color: #ffffff;
-        }
-
-        .message-form input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
+        .game-container {
+            background-color: white;
+            padding: 30px;
             border-radius: 20px;
-            outline: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .score-board {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0984e3;
+            margin-bottom: 10px;
+        }
+
+        .cps-board {
             font-size: 14px;
+            color: #636e72;
+            margin-bottom: 30px;
         }
 
-        .message-form input:focus {
-            border-color: #0084ff;
-        }
-
-        .message-form button {
-            margin-left: 10px;
-            padding: 10px 20px;
-            background-color: #0084ff;
+        .clicker-btn {
+            background-color: #00b894;
             color: white;
             border: none;
-            border-radius: 20px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #00a884;
+            transition: transform 0.1s, box-shadow 0.1s;
+            outline: none;
+            margin-bottom: 30px;
+        }
+
+        .clicker-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #00a884;
+        }
+
+        .upgrade-section {
+            border-top: 1px solid #dfe6e9;
+            padding-top: 20px;
+        }
+
+        .upgrade-btn {
+            background-color: #ffeaa7;
+            color: #2d3436;
+            border: 1px solid #fdcb6e;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
             cursor: pointer;
             font-weight: bold;
             transition: background 0.2s;
+            width: 100%;
         }
 
-        .message-form button:hover {
-            background-color: #006dd6;
+        .upgrade-btn:hover:not(:disabled) {
+            background-color: #fdcb6e;
         }
 
-        @media (max-width: 767px) {
-            .sidebar {
-                display: none; 
-            }
+        .upgrade-btn:disabled {
+            background-color: #f1f2f6;
+            color: #b2bec3;
+            border-color: #dfe6e9;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <div class="messenger-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Чаты</h2>
-            </div>
-            <div class="chat-list">
-                <div class="chat-item active">
-                    <div class="avatar">А</div>
-                    <div class="chat-info">
-                        <h3>Алексей</h3>
-                        <p>Привет! Как дела?</p>
-                    </div>
-                </div>
-                <div class="chat-item">
-                    <div class="avatar">М</div>
-                    <div class="chat-info">
-                        <h3>Мария</h3>
-                        <p>Встретимся завтра?</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+    <div class="game-container">
+        <h1>Энерго-Кликер</h1>
+        <div class="score-board" id="score">0</div>
+        <div class="cps-board">Энергия в секунду: <span id="cps">0</span></div>
 
-        <main class="chat-area">
-            <div class="chat-header">
-                <div class="avatar">А</div>
-                <div class="chat-info">
-                    <h3>Алексей</h3>
-                    <span class="status">в сети</span>
-                </div>
-            </div>
+        <button class="clicker-btn" id="clickBtn">ЖМИ!</button>
 
-            <div class="messages-container" id="messagesContainer">
-                <div class="message incoming">
-                    <p>Привет! Как дела с проектом?</p>
-                    <span class="time">12:00</span>
-                </div>
-                <div class="message outgoing">
-                    <p>Привет! Всё идет по плану, скоро закончу.</p>
-                    <span class="time">12:01</span>
-                </div>
-            </div>
-
-            <form class="message-form" id="messageForm">
-                <input type="text" id="messageInput" placeholder="Введите сообщение..." autocomplete="off" required>
-                <button type="submit">Отправить</button>
-            </form>
-        </main>
+        <div class="upgrade-section">
+            <button class="upgrade-btn" id="upgradeBtn" disabled>
+                Купить генератор (Цена: <span id="upgradeCost">15</span>)
+            </button>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const messageForm = document.getElementById('messageForm');
-            const messageInput = document.getElementById('messageInput');
-            const messagesContainer = document.getElementById('messagesContainer');
+        let score = 0;
+        let clickPower = 1;
+        let cps = 0;
+        let upgradeCost = 15;
+        let upgradeCount = 0;
 
-            messageForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const text = messageInput.value.trim();
-                if (text === '') return;
+        const scoreElement = document.getElementById('score');
+        const cpsElement = document.getElementById('cps');
+        const clickBtn = document.getElementById('clickBtn');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+        const upgradeCostElement = document.getElementById('upgradeCost');
 
-                appendMessage(text, 'outgoing');
-                messageInput.value = '';
-                
-                setTimeout(() => {
-                    appendMessage('Это автоматический ответ.', 'incoming');
-                }, 1000);
-            });
+        clickBtn.addEventListener('click', () => {
+            score += clickPower;
+            updateDisplay();
+        });
 
-            function appendMessage(text, type) {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', type);
-
-                const now = new Date();
-                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-                messageDiv.innerHTML = `
-                    <p>${escapeHtml(text)}</p>
-                    <span class="time">${timeString}</span>
-                `;
-
-                messagesContainer.appendChild(messageDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-
-            function escapeHtml(text) {
-                const map = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                };
-                return text.replace(/[&<>"']/g, m => map[m]);
+        upgradeBtn.addEventListener('click', () => {
+            if (score >= upgradeCost) {
+                score -= upgradeCost;
+                upgradeCount++;
+                cps += 1;
+                upgradeCost = Math.floor(upgradeCost * 1.5);
+                updateDisplay();
             }
         });
+
+        setInterval(() => {
+            if (cps > 0) {
+                score += cps;
+                updateDisplay();
+            }
+        }, 1000);
+
+        function updateDisplay() {
+            scoreElement.textContent = Math.floor(score);
+            cpsElement.textContent = cps;
+            upgradeCostElement.textContent = upgradeCost;
+
+            if (score >= upgradeCost) {
+                upgradeBtn.removeAttribute('disabled');
+            } else {
+                upgradeBtn.setAttribute('disabled', 'true');
+            }
+        }
     </script>
 
 <div class="beal-site-footer" style="margin-top:24px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.12);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#9aa3c4;text-align:center;background:rgba(0,0,0,.12);">🌐 Наш сайт: <a href="https://bealai.neocities.org/" target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;">bealai.neocities.org</a></div>
