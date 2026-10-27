@@ -2,172 +2,62 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Кликер с экраном загрузки</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
-        
-        .screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 250px;
-        }
-
-        h1, h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        p {
-            font-size: 16px;
-            color: #555;
-            margin: 10px 0;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #upgradeBtn {
-            background-color: #008CBA;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        #upgradeBtn:hover {
-            background-color: #007bb5;
-        }
-
-        .loader-container {
-            width: 300px;
-            background-color: #ddd;
-            border-radius: 10px;
-            overflow: hidden;
-            padding: 3px;
-        }
-
-        .loader-bar {
-            width: 0%;
-            height: 20px;
-            background-color: #4CAF50;
-            border-radius: 7px;
-            transition: width 0.1s linear;
-        }
-
-        #status {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой Мессенджер</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="messenger-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Чаты</h2>
+            </div>
+            <div class="chat-list">
+                <div class="chat-item active">
+                    <div class="avatar">А</div>
+                    <div class="chat-info">
+                        <h3>Алексей</h3>
+                        <p>Привет! Как дела?</p>
+                    </div>
+                </div>
+                <div class="chat-item">
+                    <div class="avatar">М</div>
+                    <div class="chat-info">
+                        <h3>Мария</h3>
+                        <p>Встретимся завтра?</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
 
-    <!-- Экран загрузки -->
-    <div id="loaderScreen" class="screen active">
-        <h2>Запуск игры, пожалуйста, подождите...</h2>
-        <div class="loader-container">
-            <div class="loader-bar" id="bar"></div>
-        </div>
-        <div id="status">0%</div>
+        <main class="chat-area">
+            <div class="chat-header">
+                <div class="avatar">А</div>
+                <div class="chat-info">
+                    <h3>Алексей</h3>
+                    <span class="status">в сети</span>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="message incoming">
+                    <p>Привет! Как дела с проектом?</p>
+                    <span class="time">12:00</span>
+                </div>
+                <div class="message outgoing">
+                    <p>Привет! Всё идет по плану, скоро закончу.</p>
+                    <span class="time">12:01</span>
+                </div>
+            </div>
+
+            <form class="message-form" id="messageForm">
+                <input type="text" id="messageInput" placeholder="Введите сообщение..." autocomplete="off" required>
+                <button type="submit">Отправить</button>
+            </form>
+        </main>
     </div>
 
-    <!-- Экран кликера -->
-    <div id="gameScreen" class="screen">
-        <div class="card">
-            <h1>Мой кликер</h1>
-            <p id="scoreLabel">Очки: 0</p>
-            <p id="powerLabel">Сила клика: 1</p>
-            <button onclick="clickAction()">Кликни меня!</button>
-            <button id="upgradeBtn" onclick="buyUpgrade()">Купить улучшение (Цена: 10)</button>
-        </div>
-    </div>
-
-    <script>
-        let bar = document.getElementById('bar');
-        let status = document.getElementById('status');
-        let loaderScreen = document.getElementById('loaderScreen');
-        let gameScreen = document.getElementById('gameScreen');
-        let width = 0;
-
-        let interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
-                status.innerText = "Готово!";
-                setTimeout(() => {
-                    loaderScreen.classList.remove('active');
-                    gameScreen.classList.add('active');
-                }, 500);
-            } else {
-                width += 2;
-                bar.style.width = width + '%';
-                status.innerText = width + '%';
-            }
-        }, 40);
-
-        let score = 0;
-        let clickPower = 1;
-        let upgradeCost = 10;
-
-        function clickAction() {
-            score += clickPower;
-            updateDisplay();
-        }
-
-        function buyUpgrade() {
-            if (score >= upgradeCost) {
-                score -= upgradeCost;
-                clickPower += 1;
-                upgradeCost = Math.floor(upgradeCost * 1.5);
-                updateDisplay();
-            }
-        }
-
-        function updateDisplay() {
-            document.getElementById('scoreLabel').innerText = "Очки: " + score;
-            document.getElementById('powerLabel').innerText = "Сила клика: " + clickPower;
-            document.getElementById('upgradeBtn').innerText = "Купить улучшение (Цена: " + upgradeCost + ")";
-        }
-    </script>
-
+    <script src="script.js"></script>
 
 <div class="beal-site-footer" style="margin-top:24px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.12);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#9aa3c4;text-align:center;background:rgba(0,0,0,.12);">🌐 Наш сайт: <a href="https://bealai.neocities.org/" target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;">bealai.neocities.org</a></div>
 </body>
