@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Живой Веб-Мессенджер</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background-color: #1e293b;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background-color: #0f172a;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background-color: #ef4444;
+        }
+        .status.connected {
+            background-color: #22c55e;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            word-break: break-word;
+            background-color: #334155;
+            align-self: flex-start;
+        }
+        .message.own {
+            background-color: #3b82f6;
+            align-self: flex-end;
+        }
+        .message .sender {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 3px;
+            display: block;
+        }
+        .chat-input-area {
+            padding: 15px;
+            background-color: #0f172a;
+            border-top: 1px solid #334155;
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background-color: #1e293b;
+            color: #fff;
+            outline: none;
+        }
+        .chat-input-area input:focus {
+            border-color: #3b82f6;
+        }
+        .chat-input-area button {
+            padding: 10px 15px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .chat-input-area button:hover {
+            background-color: #2563eb;
+        }
+        .login-screen {
+            position: absolute;
+            background-color: #1e293b;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+        .login-screen input {
+            padding: 10px;
+            width: 80%;
+            max-width: 250px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: white;
+            text-align: center;
+        }
+        .login-screen button {
+            padding: 10px 20px;
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-screen" id="loginScreen">
+        <h2>Введите ваше имя</h2>
+        <input type="text" id="usernameInput" placeholder="Имя пользователя...">
+        <button id="loginBtn">Войти в чат</button>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>Общий чат</span>
+            <span class="status" id="connectionStatus">Отключено</span>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <form class="chat-input-area" id="chatForm">
+            <input type="text" id="messageInput" placeholder="Введите сообщение..." autocomplete="off" required>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+
+    <!-- Подключаем библиотеку Socket.IO для реального времени -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        let username = '';
+        const loginScreen = document.getElementById('loginScreen');
+        const usernameInput = document.getElementById('usernameInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        let socket;
+
+        loginBtn.addEventListener('click', () => {
+            const name = usernameInput.value.trim();
+            if (name) {
+                username = name;
+                loginScreen.style.display = 'none';
+                initChat();
+            }
+        });
+
+        function initChat() {
+            // Подключаемся к публичному тестовому серверу чата
+            socket = io('https://socket-io-chat.now.sh');
+
+            socket.on('connect', () => {
+                connectionStatus.textContent = 'В сети';
+                connectionStatus.classList.add('connected');
+            });
+
+            socket.on('disconnect', () => {
+                connectionStatus.textContent = 'Отключено';
+                connectionStatus.classList.remove('connected');
+            });
+
+            // Получение сообщения от сервера
+            socket.on('new message', (data) => {
+                appendMessage(data.username, data.message, data.username === username);
+            });
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (text && socket) {
+                // Отправляем сообщение на сервер
+                socket.emit('add message', text);
+                // Сразу показываем у себя локально для мгновенного отклика
+                appendMessage(username, text, true);
+                messageInput.value = '';
+            }
+        });
+
+        function appendMessage(sender, text, isOwn) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            if (isOwn) {
+                messageDiv.classList.add('own');
+            }
+
+            const senderSpan = document.createElement('span');
+            senderSpan.classList.add('sender');
+            senderSpan.textContent = sender;
+            messageDiv.appendChild(senderSpan);
+
+            const textNode = document.createTextNode(text);
+            messageDiv.appendChild(textNode);
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+
+<div class="beal-site-footer" style="margin-top:24px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.12);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#9aa3c4;text-align:center;background:rgba(0,0,0,.12);">🌐 Наш сайт: <a href="https://bealai.neocities.org/" target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;">bealai.neocities.org</a></div>
+</body>
+</html>
