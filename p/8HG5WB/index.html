@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sven AI & Gifts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковая панель или шапка -->
+        <header class="chat-header">
+            <div class="avatar">🤖</div>
+            <div class="chat-info">
+                <h2>Свен (AI)</h2>
+                <span class="status">онлайн</span>
+            </div>
+        </header>
+
+        <!-- Основная область чата -->
+        <main class="chat-messages" id="chatMessages">
+            <div class="message ai">
+                Привет! Я Свен, твой личный искусственный интеллект. Чем могу помочь сегодня?
+            </div>
+        </main>
+
+        <!-- Раздел подарков -->
+        <section class="gifts-section">
+            <h3>NFT Подарки</h3>
+            <div class="gifts-grid">
+                <div class="gift-card" onclick="sendGift('Звезда ⭐️')">
+                    <span>⭐️</span>
+                    <p>Звезда</p>
+                </div>
+                <div class="gift-card" onclick="sendGift('Торт 🎂')">
+                    <span>🎂</span>
+                    <p>Торт</p>
+                </div>
+                <div class="gift-card" onclick="sendGift('Пазл 🧩')">
+                    <span>🧩</span>
+                    <p>Пазл</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ввод сообщения -->
+        <footer class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Сообщение...">
+            <button id="sendBtn">Отправить</button>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+
+<div class="beal-site-footer" style="margin-top:24px;padding:14px 16px;border-top:1px solid rgba(255,255,255,.12);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#9aa3c4;text-align:center;background:rgba(0,0,0,.12);">🌐 Наш сайт: <a href="https://bealai.neocities.org/" target="_blank" rel="noopener noreferrer" style="color:#22d3ee;text-decoration:none;">bealai.neocities.org</a></div>
+</body>
+</html>
